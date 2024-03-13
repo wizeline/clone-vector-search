@@ -48,12 +48,13 @@ pip install -r requirements.txt
 
 ## Running the Service
 1. Set Environment Variables (if applicable) in [.env](.env) and [.flaskenv](.flaskenv) files:
-2. In order to run this service locally, you'll need localstack in order to mock some AWS Services. 
+2. Create the opensearch index. The application will create the needed mapping.
+3. In order to run this service locally, you'll need localstack in order to mock some AWS Services. 
    * Once you have localstack installed and running, create a `clone-ingestion-messages` bucket:
    `aws --endpoint-url=http://localhost:4566 s3 mb s3://clone-ingestion-messages`
    * Add the required test files by running:
    `aws --endpoint-url=http://localhost:4566 s3 cp /path/to/your/file/filename.json s3://clone-ingestion-messages/key/to/file.json`
-3. Start the Flask Server:
+4. Start the Flask Server:
 
 ```Bash
 flask run
@@ -62,7 +63,7 @@ flask run
 
 ## Building the Docker Image
 ```Bash
-docker build -t my-flask-service .
+docker compose up --build
 ```
 [⇧ back to top](#table-of-contents)
 
