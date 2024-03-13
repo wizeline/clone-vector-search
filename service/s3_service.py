@@ -1,5 +1,8 @@
+import json
+
 import boto3
 from abc import ABC, abstractmethod
+from utils.logger import logger
 
 
 class AbstractS3Service(ABC):
@@ -7,34 +10,16 @@ class AbstractS3Service(ABC):
     def get_object(self, bucket_name, object_key):
         pass
 
-    @abstractmethod
-    def update_object(self, bucket_name, object_key, data):
-        pass
-
 
 class S3Service(AbstractS3Service):
-    def __init__(self):
-        self.s3_client = boto3.client('s3')
+    def __init__(self, s3_url):
+        self.s3_client = boto3.client('s3', endpoint_url=s3_url)
 
     def get_object(self, bucket_name, object_key):
-        return "Hello from the service layer"
-        # try:
-        #     response = self.s3_client.get_object(
-        #         Bucket=bucket_name,
-        #         Key=object_key
-        #     )
-        #     return response['Body']  # Return the object's content
-        # except Exception as e:
-        #     # Add robust error handling here
-        #     raise Exception(f"Error retrieving object from S3: {e}")
-
-    def update_object(self, bucket_name, object_key, data):
         try:
-            self.s3_client.put_object(
-                Bucket=bucket_name,
-                Key=object_key,
-                Body=data
-            )
+            response = self.s3_client.get_object(Bucket=bucket_name, Key=object_key)
+            json_content = response['Body'].read().decode('utf-8')
+            return json.loads(json_content)
         except Exception as e:
-            # Add robust error handling here
-            raise Exception(f"Error updating object in S3: {e}")
+            logger.error(f"Error while retrieving and loading the Created S3 file: {str(e)}")
+            return None
