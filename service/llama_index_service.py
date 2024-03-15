@@ -11,6 +11,9 @@ class AbstractLlamaIndexService(ABC):
     @abstractmethod
     def vector_store_index(self, twin_id, source_name, file_uuid, documents):
         pass
+    @abstractmethod
+    def vectorize_string(self, input):
+        pass
 
 
 class LlamaIndexService(AbstractLlamaIndexService):
@@ -52,3 +55,6 @@ class LlamaIndexService(AbstractLlamaIndexService):
             embed_model=self.embed_model
         )
         return
+
+    def vectorize_string(self, text_input):
+        return self.embed_model.get_text_embedding(text_input)
