@@ -18,12 +18,11 @@ class Controller(AbstractController):
             return jsonify({'error': 'Method not allowed'}), 405
 
         request_data = request.get_json()
-        bucket_name = request_data['s3']['bucket']['name']
-        object_key = request_data['s3']['object']['key']
+        s3_bucket = request_data['Records'][0]['s3']['bucket']['name']
+        s3_object_key = request_data['Records'][0]['s3']['object']['key']
 
         try:
-            result = self.usecase.get_object(bucket_name, object_key)
-            # TODO: Process the 'result' (content from S3) for 'vectorization'
-            return jsonify({'message': 'Object vectorization in progress!', 'result': result}), 200
+            self.usecase.vectorize_and_index(s3_bucket, s3_object_key)
+            return jsonify({'message': 'Object vectorization succeeded!'}), 200
         except Exception as e:
             return jsonify({'error': str(e)}), 500

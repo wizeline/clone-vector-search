@@ -6,9 +6,9 @@ from flask import Flask, jsonify
 
 from config import DevelopmentConfig, Config
 from controller.controller import Controller
+from service.llama_index_service import LlamaIndexService
 from service.s3_service import S3Service
 from usecase.usecase import Usecase
-from utils.logger import logger
 
 load_dotenv()
 IS_LOCAL = "IS_LOCAL"
@@ -24,8 +24,9 @@ app.config.from_object(cfg)
 
 
 # Initialize services and dependencies
-s3_service = S3Service()
-usecase = Usecase(s3_service)
+s3_service = S3Service(cfg.S3_URL)
+llama_service = LlamaIndexService(cfg.OPENSEARCH_CLUSTER_URL, cfg.OPENSEARCH_INDEX)
+usecase = Usecase(s3_service, llama_service)
 controller = Controller(usecase)
 
 # Add the route
