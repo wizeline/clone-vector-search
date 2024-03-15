@@ -41,6 +41,6 @@ class Controller(AbstractController):
 
         try:
             result = self.usecase.search(query)
-            return jsonify({'message': result}), HTTPStatus.OK
+            return jsonify({'results': result}), HTTPStatus.OK
         except Exception as e:
             return jsonify({'error': str(e)}), HTTPStatus.INTERNAL_SERVER_ERROR
