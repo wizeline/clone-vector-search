@@ -2,7 +2,10 @@ import json
 
 import boto3
 from abc import ABC, abstractmethod
-from utils.logger import logger
+
+from botocore.client import BaseClient
+
+from src.utils.logger import logger
 
 
 class AbstractS3Service(ABC):
@@ -12,8 +15,8 @@ class AbstractS3Service(ABC):
 
 
 class S3Service(AbstractS3Service):
-    def __init__(self, s3_url):
-        self.s3_client = boto3.client('s3', endpoint_url=s3_url)
+    def __init__(self, s3_client: BaseClient):
+        self.s3_client = s3_client
 
     def get_object(self, bucket_name, object_key):
         try:

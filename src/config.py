@@ -22,7 +22,8 @@ class Config:
 class DevelopmentConfig(Config):
     LOG_LEVEL = "DEBUG"
     OPENSEARCH_INDEX = "clone-vector-index"
-    OPENSEARCH_HOST = "localhost"
+    # OPENSEARCH_HOST = "localhost"
+    OPENSEARCH_HOST = "host.docker.internal"
     OPENSEARCH_PORT = "9200"
     OPENSEARCH_USER = ""
     OPENSEARCH_PASSWORD = ""
@@ -30,7 +31,8 @@ class DevelopmentConfig(Config):
     OPENSEARCH_VERIFY_CERTS = False
     S3_BUCKET = "clone-ingestion-messages"
     IS_LOCAL = True
-    S3_URL = "http://localhost:4566"
+    # S3_URL = "http://localhost:4566"
+    S3_URL = "http://host.docker.internal:4566"
     AWS_ACCESS_KEY_ID = "test"
     AWS_SECRET_ACCESS_KEY = "test"
     AWS_DEFAULT_REGION = "us-east-1"

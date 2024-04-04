@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from opensearchpy import OpenSearch, RequestsHttpConnection
+from opensearchpy import OpenSearch
 
 
 class AbstractOpensearchService(ABC):
@@ -9,14 +9,8 @@ class AbstractOpensearchService(ABC):
 
 
 class OpensearchService(AbstractOpensearchService):
-    def __init__(self, host, port, username, password, use_ssl, verify_certs, index):
-        self.client = OpenSearch(
-            hosts=[{'host': host, 'port': port}],
-            http_auth=(username, password),
-            use_ssl=use_ssl,
-            verify_certs=verify_certs,
-            connection_class=RequestsHttpConnection
-        )
+    def __init__(self, opensearch_client: OpenSearch, index: str):
+        self.client = opensearch_client
         self.index = index
 
     def search(self, query):

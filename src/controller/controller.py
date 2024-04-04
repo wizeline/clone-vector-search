@@ -1,7 +1,7 @@
 from http import HTTPStatus
 from abc import ABC, abstractmethod
-from flask import Flask, request, jsonify
-from usecase.usecase import AbstractUsecase
+from flask import request, jsonify
+from src.usecase.usecase import AbstractUsecase
 
 
 class AbstractController(ABC):

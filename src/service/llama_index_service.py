@@ -1,32 +1,25 @@
 from llama_index.core import StorageContext, Document, VectorStoreIndex
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
-from llama_index.vector_stores.opensearch import OpensearchVectorClient, OpensearchVectorStore
+from llama_index.vector_stores.opensearch import OpensearchVectorStore
 
 from abc import ABC, abstractmethod
 
-from utils import utils
+from src.utils import utils
 
 
 class AbstractLlamaIndexService(ABC):
     @abstractmethod
     def vector_store_index(self, twin_id, source_name, file_uuid, documents):
         pass
+
     @abstractmethod
-    def vectorize_string(self, input):
+    def vectorize_string(self, text_input):
         pass
 
 
 class LlamaIndexService(AbstractLlamaIndexService):
-    def __init__(self, opensearch_url, opensearch_index):
-        # OpensearchVectorClient stores text in this field by default
-        text_field = "content"
-        # OpensearchVectorClient stores embeddings in this field by default
-        embedding_field = "embedding"
-        self.client = OpensearchVectorClient(
-            opensearch_url, opensearch_index, 1536, embedding_field=embedding_field, text_field=text_field
-        )
-        self.vector_store = OpensearchVectorStore(self.client)
-        self.storage_context = StorageContext.from_defaults(vector_store=self.vector_store)
+    def __init__(self, vector_store: OpensearchVectorStore):
+        self.storage_context = StorageContext.from_defaults(vector_store=vector_store)
         self.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
 
     def vector_store_index(self, twin_id, source_name, file_uuid, documents):

@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 import numpy as np
 
-from service.opensearch_service import AbstractOpensearchService
-from service.s3_service import AbstractS3Service
-from service.llama_index_service import AbstractLlamaIndexService
-from utils.logger import logger
+from src.service.opensearch_service import AbstractOpensearchService
+from src.service.s3_service import AbstractS3Service
+from src.service.llama_index_service import AbstractLlamaIndexService
+from src.utils.logger import logger
 
 EMBED_FIELD = "embedding"
 
