@@ -1,4 +1,5 @@
 from os import environ
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -24,4 +25,3 @@ class DevelopmentConfig(Config):
     AWS_ACCESS_KEY_ID = "test"
     AWS_SECRET_ACCESS_KEY = "test"
     AWS_DEFAULT_REGION = "us-east-1"
-

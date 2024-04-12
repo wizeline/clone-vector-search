@@ -1,10 +1,9 @@
-from abc import ABC, abstractmethod
 from os import environ
+
 from dotenv import load_dotenv
+from flask import Flask
 
-from flask import Flask, jsonify
-
-from config import DevelopmentConfig, Config
+from config import Config, DevelopmentConfig
 from controller.controller import Controller
 from service.llama_index_service import LlamaIndexService
 from service.s3_service import S3Service
@@ -30,8 +29,10 @@ usecase = Usecase(s3_service, llama_service)
 controller = Controller(usecase)
 
 # Add the route
-app.add_url_rule('/v1/api/vectorize', 'vectorize', controller.vectorize, methods=['POST'])
+app.add_url_rule(
+    "/v1/api/vectorize", "vectorize", controller.vectorize, methods=["POST"]
+)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)

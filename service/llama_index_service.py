@@ -1,8 +1,11 @@
-from llama_index.core import StorageContext, Document, VectorStoreIndex
-from llama_index.embeddings.huggingface import HuggingFaceEmbedding
-from llama_index.vector_stores.opensearch import OpensearchVectorClient, OpensearchVectorStore
-
 from abc import ABC, abstractmethod
+
+from llama_index.core import Document, StorageContext, VectorStoreIndex
+from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+from llama_index.vector_stores.opensearch import (
+    OpensearchVectorClient,
+    OpensearchVectorStore,
+)
 
 from utils import utils
 
@@ -20,10 +23,16 @@ class LlamaIndexService(AbstractLlamaIndexService):
         # OpensearchVectorClient stores embeddings in this field by default
         embedding_field = "embedding"
         self.client = OpensearchVectorClient(
-            opensearch_url, opensearch_index, 1536, embedding_field=embedding_field, text_field=text_field
+            opensearch_url,
+            opensearch_index,
+            1536,
+            embedding_field=embedding_field,
+            text_field=text_field,
         )
         self.vector_store = OpensearchVectorStore(self.client)
-        self.storage_context = StorageContext.from_defaults(vector_store=self.vector_store)
+        self.storage_context = StorageContext.from_defaults(
+            vector_store=self.vector_store
+        )
         self.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
 
     def vector_store_index(self, twin_id, source_name, file_uuid, documents):
@@ -43,12 +52,12 @@ class LlamaIndexService(AbstractLlamaIndexService):
                         "twin_id": twin_id,
                         "source_name": source_name,
                         "file_uuid": file_uuid,
-                    }
+                    },
                 )
             )
         VectorStoreIndex.from_documents(
             documents=docs,
             storage_context=self.storage_context,
-            embed_model=self.embed_model
+            embed_model=self.embed_model,
         )
         return

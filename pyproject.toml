@@ -1,0 +1,12 @@
+[tool.black]
+line-length = 88
+exclude = '''
+(
+  \.venv/
+  |env/
+)
+'''
+[tool.isort]
+profile = "black"
+line_length = 88
+skip = ["env/", ".venv/"]
