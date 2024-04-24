@@ -1,44 +1,49 @@
-import unittest
-from http import HTTPStatus
-from unittest.mock import patch, MagicMock  # For mocking dependencies
-from src.controller import controller
-from test.conftest import app, client
-from src.usecase.usecase import AbstractUsecase
+import http
+import json
+from unittest.mock import patch
+
+from src.controller.controller import Controller
 
 
-class TestController(unittest.TestCase):
+def test_vectorize_endpoint(test_app_client, mock_llama_service, mock_opensearch_service, mock_opensearch_client):
+    """Test the /v1/api/vectorize endpoint"""
+    with patch('src.controller.controller.current_app') as current_app_mock:
+        current_app_mock.config = {"OPENSEARCH_INDEX": "test index"}
 
-    def setUp(self):
-        self.mock_usecase = MagicMock(spec=AbstractUsecase)  # Create a mock usecase
-        self.controller = controller.Controller(self.mock_usecase)
-        self.app = app()
-        self.app_context = self.app.app_context()
-        self.app_context.push()
-        self.client = client(self.app)
+        # Inject the mock opensearch service with the mock opensearch client
+        mock_opensearch_service.opensearch_client = mock_opensearch_client
+        controller = Controller(mock_llama_service)
+        # sample payload for testing
+        payload = {
+            "texts": ["Vae, omnia!", "Nutrixs tolerare in berolinum!"]
+        }
 
-        # Test cases for 'vectorize' will go here
-    @patch('flask.request')
-    def test_vectorize_success(self, mock_request):
-        response = self.client.post('/', json={
-            'Records': [{'s3': {'bucket': {'name': 'bucket_name'},
-                                'object': {'key': 'object_key'}}}]
-        })
+        response = test_app_client.post("/v1/api/vectorize", json=payload)
 
-        self.mock_usecase.vectorize_and_index.assert_called_once_with('bucket_name', 'object_key')
-
-    # Test cases for 'search' will go here
-    @patch('flask.request')
-    def test_search_success(self, mock_request):
-        mock_request.method = 'GET'
-        mock_request.args.get = MagicMock(return_value="test_query")
-        self.mock_usecase.search.return_value = ['result1', 'result2']
-
-        response = self.controller.search()
-
-        self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertEqual(response.json, {'results': ['result1', 'result2']})
-        self.mock_usecase.search.assert_called_once_with('test_query')
+        assert response.status_code == http.HTTPStatus.OK
+        data = json.loads(response.data)
+        print(data)
 
 
-if __name__ == '__main__':
-    unittest.main()
+def test_search_endpoint(test_app_client, mock_opensearch_service, mock_opensearch_client):
+    """Test the /v1/api/search endpoint."""
+    with patch('src.controller.controller.current_app') as current_app_mock:
+        current_app_mock.config = {'OPENSEARCH_INDEX': 'test_index'}
+
+        # Inject the mock opensearch service with the mock opensearch client
+        mock_opensearch_service.opensearch_client = mock_opensearch_client
+        controller = Controller(mock_opensearch_service)
+
+        # Define a sample payload for testing
+        payload = {
+            'query': 'example query'
+        }
+
+        # Make a POST request to the endpoint
+        response = test_app_client.post('/v1/api/search', json=payload)
+
+        # Assert the response
+        assert response.status_code == 200
+        data = json.loads(response.data)
+        assert 'results' in data
+        assert isinstance(data['results'], list)

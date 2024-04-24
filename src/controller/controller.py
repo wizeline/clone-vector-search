@@ -33,9 +33,10 @@ class Controller(AbstractController):
             return jsonify({'error': str(e)}), HTTPStatus.INTERNAL_SERVER_ERROR
 
     def search(self):
-        if request.method != "GET":
+        if request.method != "POST":
             return jsonify({'error': 'Method not allowed'}), HTTPStatus.METHOD_NOT_ALLOWED
-        query = request.args.get("q")
+        body = request.get_json()
+        query = body["q"]
         if query is None or query.strip() == "":
             return jsonify({'error': 'query param "q" is required'}), HTTPStatus.BAD_REQUEST
 

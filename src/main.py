@@ -1,22 +1,23 @@
-import json
 from os import environ
 
 import boto3
 from dotenv import load_dotenv
 
-from flask import Flask, jsonify
+from flask import Flask
 from llama_index.vector_stores.opensearch import OpensearchVectorClient, OpensearchVectorStore
 
-from config import DevelopmentConfig, Config
-from controller.controller import Controller
-from service.llama_index_service import LlamaIndexService
-from service.opensearch_service import OpensearchService
-from service.s3_service import S3Service
-from usecase.usecase import Usecase
+from src.config import DevelopmentConfig, Config
+from src.controller.controller import Controller
+from src.service.llama_index_service import LlamaIndexService
+from src.service.opensearch_service import OpensearchService
+from src.service.s3_service import S3Service
+from src.usecase.usecase import Usecase
+from src.utils.logger import logger
 from opensearchpy import OpenSearch, RequestsHttpConnection
 
 load_dotenv()
 IS_LOCAL = "IS_LOCAL"
+
 
 app = Flask(__name__)
 is_local = environ.get(IS_LOCAL)
@@ -24,21 +25,7 @@ cfg = Config
 
 if is_local:
     cfg = DevelopmentConfig
-
-print(cfg.LOG_LEVEL)
-print(cfg.OPENSEARCH_INDEX)
-print(cfg.OPENSEARCH_HOST)
-print(cfg.OPENSEARCH_PORT)
-print(cfg.OPENSEARCH_USER)
-print(cfg.OPENSEARCH_PASSWORD)
-print(cfg.OPENSEARCH_USE_SSL)
-print(cfg.OPENSEARCH_VERIFY_CERTS)
-print(cfg.S3_BUCKET)
-print(cfg.IS_LOCAL)
-print(cfg.S3_URL)
-print(cfg.AWS_ACCESS_KEY_ID)
-print(cfg.AWS_SECRET_ACCESS_KEY)
-print(cfg.AWS_DEFAULT_REGION)
+    logger.info("development config loaded")
 
 app.config.from_object(cfg)
 
@@ -79,7 +66,7 @@ controller = Controller(usecase)
 
 # Add the route
 app.add_url_rule('/v1/api/vectorize', 'vectorize', controller.vectorize, methods=['POST'])
-app.add_url_rule('/v1/api/search', 'search', controller.search, methods=['GET'])
+app.add_url_rule('/v1/api/search', 'search', controller.search, methods=['POST'])
 
 
 if __name__ == '__main__':
