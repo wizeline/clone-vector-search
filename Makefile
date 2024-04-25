@@ -6,3 +6,9 @@ lint:
 	@black .
 	@echo "\n------>Linting code"
 	@flake8 .
+
+test:
+	@pip3 install coverage pytest
+	@coverage run -m pytest
+	@coverage report
+.PHONY: test 
