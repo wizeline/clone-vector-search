@@ -19,7 +19,11 @@ app.config.from_object(cfg)
 # Initialize services and dependencies
 s3_service = S3Service(cfg.S3_URL, logger)
 llama_service = LlamaIndexService(
-    cfg.OPENSEARCH_CLUSTER_URL, cfg.OPENSEARCH_INDEX, logger
+    cfg.OPENSEARCH_CLUSTER_URL,
+    cfg.OPENSEARCH_INDEX,
+    cfg.OPENSEARCH_USER,
+    cfg.OPENSEARCH_PASS,
+    logger,
 )
 usecase = VectorizerUsecase(s3_service, llama_service, logger)
 controller = VectorController(usecase, logger)

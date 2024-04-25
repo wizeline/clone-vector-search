@@ -17,7 +17,14 @@ EMBEDDING_FIELD = "embedding"
 
 
 class LlamaIndexService(AbstractLlamaIndexService):
-    def __init__(self, open_search_url: str, open_search_index: str, logger: Logger):
+    def __init__(
+        self,
+        open_search_url: str,
+        open_search_index: str,
+        open_search_user: str,
+        open_search_password: str,
+        logger: Logger,
+    ):
         """
         Initialize the LlamaIndexService.
 
@@ -35,7 +42,9 @@ class LlamaIndexService(AbstractLlamaIndexService):
             dim=384,
             embedding_field=EMBEDDING_FIELD,
             text_field=TEXT_FIELD,
+            http_auth=(open_search_user, open_search_password),
         )
+
         self.vector_store = OpensearchVectorStore(self.client)
         self.storage_context = StorageContext.from_defaults(
             vector_store=self.vector_store
