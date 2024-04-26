@@ -3,11 +3,14 @@ import spacy
 nlp = spacy.load("en_core_web_sm")
 
 
-def preprocess_text(text) -> str:
+def preprocess_text(text: str) -> str:
     """
-    preprocess_text takes text as input, removes punctuation symbols, stop words and lemmatizes the text
-    :param text: raw text string
-    :return: lemmatized, stop-word removed, lower-cased text
+    Takes text as input, removes punctuation symbols, stop words and lemmatizes the text
+    Args:
+        text (str): raw text string
+
+    Returns:
+        str: lemmatized, stop-word removed, lower-cased text
     """
     # Process text using SpaCy
     doc = nlp(text)

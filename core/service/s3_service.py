@@ -7,6 +7,10 @@ from core.abstracts.services import AbstractS3Service
 
 
 class S3Service(AbstractS3Service):
+    """
+    Service class for S3 operations.
+    """
+
     def __init__(self, s3_url: str, logger: Logger):
         """
         Initialize S3Service.
@@ -18,7 +22,7 @@ class S3Service(AbstractS3Service):
         self.s3_client = boto3.client("s3", endpoint_url=s3_url)
         self.logger = logger
 
-    def get_object(self, bucket_name: str, object_key: str) -> dict:
+    def get_object(self, bucket_name: str, object_key: str) -> list:
         """
         Get an object from S3.
 
@@ -27,7 +31,7 @@ class S3Service(AbstractS3Service):
             object_key (str): Key of the object in the S3 bucket.
 
         Returns:
-            dict: Dictionary containing the loaded JSON content of the S3 object, or None if an error occurs.
+            list: List of dictionaries containing the loaded JSON content of the S3 object, or None if an error occurs.
         """
         try:
             response = self.s3_client.get_object(Bucket=bucket_name, Key=object_key)

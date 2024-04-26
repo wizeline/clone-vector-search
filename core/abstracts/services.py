@@ -8,7 +8,7 @@ class AbstractS3Service(ABC):
     """
 
     @abstractmethod
-    def get_object(self, bucket_name, object_key) -> dict:
+    def get_object(self, bucket_name: str, object_key: str) -> dict:
         """
         Abstract method to get an object from S3.
 
@@ -28,7 +28,9 @@ class AbstractLlamaIndexService(ABC):
     """
 
     @abstractmethod
-    def vector_store_index(self, twin_id, source_name, file_uuid, documents) -> str:
+    def vector_store_index(
+        self, twin_id: str, source_name: str, file_uuid: str, documents: list
+    ) -> str:
         """
         Abstract method to indexing documents and store vectors in OpenSearch.
 

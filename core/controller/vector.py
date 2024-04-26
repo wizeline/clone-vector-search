@@ -8,6 +8,10 @@ from core.abstracts.usescases import AbstractVectorizeUsecase
 
 
 class VectorController(AbstractVectorController):
+    """
+    Controller for vectorization operations.
+    """
+
     def __init__(self, usecase: AbstractVectorizeUsecase, logger: Logger):
         """
         Initialize the Controller.
@@ -31,8 +35,9 @@ class VectorController(AbstractVectorController):
         Returns:
             Tuple[Dict[str, str], int]: Tuple containing a JSON response indicating success or failure of the vectorization process and an HTTP status code.
         """
-        s3_bucket = request["Records"][0]["s3"]["bucket"]["name"]
-        s3_object_key = request["Records"][0]["s3"]["object"]["key"]
+        record = request["Records"][0]["s3"]
+        s3_bucket = record["bucket"]["name"]
+        s3_object_key = record["object"]["key"]
 
         try:
             self.usecase.vectorize_and_index(s3_bucket, s3_object_key)

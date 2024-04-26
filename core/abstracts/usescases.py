@@ -8,7 +8,7 @@ class AbstractVectorizeUsecase(ABC):
     """
 
     @abstractmethod
-    def vectorize_and_index(self, bucket_name, object_key) -> str:
+    def vectorize_and_index(self, bucket_name: str, object_key: str) -> str:
         """
         Abstract method to vectorize and index documents.
 

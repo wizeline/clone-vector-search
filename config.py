@@ -21,6 +21,8 @@ class Config:
     IS_LOCAL = environ.get("IS_LOCAL")
     S3_URL = None
     S3_INDEX_PATH = environ.get("S3_INDEX_PATH")
+    OPENSEARCH_USER = environ.get("OPENSEARCH_USER")
+    OPENSEARCH_PASS = environ.get("OPENSEARCH_PASS")
 
 
 class DevelopmentConfig(Config):

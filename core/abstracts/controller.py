@@ -17,6 +17,5 @@ class AbstractVectorController(ABC):
 
         Returns:
             Tuple[Dict[str, str], int]: Tuple containing a JSON response indicating success or failure of the vectorization process and an HTTP status code.
-
         """
         pass

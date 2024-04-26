@@ -6,6 +6,10 @@ from core.service.s3_service import AbstractS3Service
 
 
 class VectorizerUsecase(AbstractVectorizeUsecase):
+    """
+    Usecase for vectorizing and indexing documents.
+    """
+
     def __init__(
         self,
         s3_service: AbstractS3Service,
@@ -23,7 +27,7 @@ class VectorizerUsecase(AbstractVectorizeUsecase):
         self.llama_index_service = llama_index_service
         self.logger = logger
 
-    def vectorize_and_index(self, bucket_name, object_key) -> str:
+    def vectorize_and_index(self, bucket_name: str, object_key: str) -> str:
         """
         This method retrieves JSON content from the specified S3 bucket and delegates indexing tasks
         to the llama_index_service.
