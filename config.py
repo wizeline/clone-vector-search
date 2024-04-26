@@ -32,11 +32,13 @@ class DevelopmentConfig(Config):
 
     DEBUG = True
     LOG_LEVEL = "DEBUG"
-    OPENSEARCH_CLUSTER_URL = "http://localhost:9200"
+    OPENSEARCH_CLUSTER_URL = "http://host.docker.internal:9200"
     OPENSEARCH_INDEX = "clone-vector-index"
-    S3_BUCKET = "clone-ingestion-messages"
+    OPENSEARCH_USER = "clonAISearch"
+    OPENSEARCH_PASS = "user"
+    S3_BUCKET = "pass"
     IS_LOCAL = True
-    S3_URL = "http://localhost:4566"
+    S3_URL = "http://host.docker.internal:4566"
     AWS_ACCESS_KEY_ID = "test"
     AWS_SECRET_ACCESS_KEY = "test"
     AWS_DEFAULT_REGION = "us-east-1"
