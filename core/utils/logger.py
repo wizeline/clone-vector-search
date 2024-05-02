@@ -1,10 +1,10 @@
 import logging
 import os
 
-LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO')  # Default to INFO if not set
+LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 
 # Create a basic logger
-logger = logging.getLogger(__name__)  # __name__ gets the current module's name
+logger = logging.getLogger(__name__)
 logger.setLevel(LOG_LEVEL)
 
 # Create console handler (outputs to the terminal)
