@@ -64,7 +64,7 @@ class AbstractOpensearchService(ABC):
        Abstract class for Opensearch services
    """
     @abstractmethod
-    def search(self, query: dict):
+    def search(self, query: dict) -> list:
         """
         Abstract method to query an opensearch index
 

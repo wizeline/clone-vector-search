@@ -45,7 +45,7 @@ class VectorController(AbstractVectorController):
             return jsonify({"message": "Object vectorization succeeded!"}), HTTPStatus.OK
         except Exception as e:
             self.logger.error(f"Failed to vectorize object {s3_object_key}")
-            return jsonify({"error": str(e)}), 500
+            return jsonify({"error": str(e)}), HTTPStatus.INTERNAL_SERVER_ERROR
 
     def search(self, request: Dict[str, Any]) -> Tuple[Response, int]:
         query = request["q"]

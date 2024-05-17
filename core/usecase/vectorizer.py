@@ -1,3 +1,4 @@
+import numpy
 import numpy as np
 
 from logging import Logger
@@ -10,17 +11,18 @@ from core.service.s3_service import AbstractS3Service
 
 EMBED_FIELD = "embedding"
 
+
 class VectorizerUsecase(AbstractVectorizeUsecase):
     """
     Usecase for vectorizing and indexing documents.
     """
 
     def __init__(
-        self,
-        s3_service: AbstractS3Service,
-        llama_index_service: AbstractLlamaIndexService,
-        opensearch_service: AbstractOpensearchService,
-        logger: Logger,
+            self,
+            s3_service: AbstractS3Service,
+            llama_index_service: AbstractLlamaIndexService,
+            opensearch_service: AbstractOpensearchService,
+            logger: Logger,
     ):
         """
         Initialize the Usecase.
@@ -64,7 +66,12 @@ class VectorizerUsecase(AbstractVectorizeUsecase):
 
     def search(self, query: str) -> list[dict[str, Any]]:
         """
-        search
+        Performs a search request to the configured opensearch index. Returns a list of results
+        Args:
+            query (str): the string to search in the indexed documents
+
+        Returns:
+            list[dict[str, Any]]: A list of matching documents.
         """
         # vectorize query
         v_query = self.llama_index_service.vectorize_string(query)
@@ -82,7 +89,7 @@ class VectorizerUsecase(AbstractVectorizeUsecase):
         return messages
 
 
-def build_opensearch_vector_query(query_vector, field_name, k=10):
+def build_opensearch_vector_query(query_vector: numpy.ndarray, field_name: str, k: int = 10) -> dict:
     """
     Builds an OpenSearch query for searching in vector fields sorted by cosine similarity.
     Args:
