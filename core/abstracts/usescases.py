@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Any
 
 
 class AbstractVectorizeUsecase(ABC):
@@ -18,5 +19,18 @@ class AbstractVectorizeUsecase(ABC):
 
         Returns:
             str: The indexed document.
+        """
+        pass
+
+    @abstractmethod
+    def search(self, query: str) -> list[dict[str, Any]]:
+        """
+        Abstract method to search for indexed documents.
+
+        Args:
+            query (str): The text to search documents containing the query text.
+
+        Returns:
+            list[dict[str, Any]]: The list of results
         """
         pass

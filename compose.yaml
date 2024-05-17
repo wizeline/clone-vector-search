@@ -16,6 +16,12 @@ services:
     networks:
       - internal-net
     env_file: .env
+    depends_on:
+      localstack:
+        condition: service_started
+      opensearch:
+        condition: service_started
+        restart: true
 
   localstack:
     image: localstack/localstack:latest

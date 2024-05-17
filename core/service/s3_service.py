@@ -1,7 +1,7 @@
 import json
 from logging import Logger
 
-import boto3
+from botocore.client import BaseClient
 
 from core.abstracts.services import AbstractS3Service
 
@@ -11,7 +11,7 @@ class S3Service(AbstractS3Service):
     Service class for S3 operations.
     """
 
-    def __init__(self, s3_url: str, logger: Logger):
+    def __init__(self, s3_client: BaseClient, logger: Logger):
         """
         Initialize S3Service.
 
@@ -19,7 +19,7 @@ class S3Service(AbstractS3Service):
             s3_url (str): URL of the S3 service.
             logger (Logger): Logger instance.
         """
-        self.s3_client = boto3.client("s3", endpoint_url=s3_url)
+        self.s3_client = s3_client
         self.logger = logger
 
     def get_object(self, bucket_name: str, object_key: str) -> list:
