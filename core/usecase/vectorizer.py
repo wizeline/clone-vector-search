@@ -1,8 +1,15 @@
-from logging import Logger
+import numpy
+import numpy as np
 
+from logging import Logger
+from typing import Any
+
+from core.abstracts.services import AbstractOpensearchService
 from core.abstracts.usescases import AbstractVectorizeUsecase
 from core.service.llama_index_service import AbstractLlamaIndexService
 from core.service.s3_service import AbstractS3Service
+
+EMBED_FIELD = "embedding"
 
 
 class VectorizerUsecase(AbstractVectorizeUsecase):
@@ -11,10 +18,11 @@ class VectorizerUsecase(AbstractVectorizeUsecase):
     """
 
     def __init__(
-        self,
-        s3_service: AbstractS3Service,
-        llama_index_service: AbstractLlamaIndexService,
-        logger: Logger,
+            self,
+            s3_service: AbstractS3Service,
+            llama_index_service: AbstractLlamaIndexService,
+            opensearch_service: AbstractOpensearchService,
+            logger: Logger,
     ):
         """
         Initialize the Usecase.
@@ -25,6 +33,7 @@ class VectorizerUsecase(AbstractVectorizeUsecase):
         """
         self.s3_service = s3_service
         self.llama_index_service = llama_index_service
+        self.opensearch_service = opensearch_service
         self.logger = logger
 
     def vectorize_and_index(self, bucket_name: str, object_key: str) -> str:
@@ -54,3 +63,54 @@ class VectorizerUsecase(AbstractVectorizeUsecase):
         except ValueError as e:
             self.logger.error(e)
             raise ValueError(e)
+
+    def search(self, query: str) -> list[dict[str, Any]]:
+        """
+        Performs a search request to the configured opensearch index. Returns a list of results
+        Args:
+            query (str): the string to search in the indexed documents
+
+        Returns:
+            list[dict[str, Any]]: A list of matching documents.
+        """
+        # vectorize query
+        v_query = self.llama_index_service.vectorize_string(query)
+        vector = np.array(v_query)
+        # build query
+        query = build_opensearch_vector_query(vector, EMBED_FIELD)
+        # search and return results
+        results = self.opensearch_service.search(query)
+        messages = [
+            {
+                "raw_text": result["_source"]["metadata"]["raw_text"],
+                "source_name": result["_source"]["metadata"]["source_name"],
+                "file_uuid": result["_source"]["metadata"]["file_uuid"],
+            } for result in results]
+        return messages
+
+
+def build_opensearch_vector_query(query_vector: numpy.ndarray, field_name: str, k: int = 10) -> dict:
+    """
+    Builds an OpenSearch query for searching in vector fields sorted by cosine similarity.
+    Args:
+        query_vector (numpy.ndarray): The vectorized representation of the input query.
+        field_name (str): The name of the knn_vector field in your OpenSearch index.
+        k (int, optional): The number of nearest neighbors to return. Defaults to 10.
+    Returns:
+        dict: An OpenSearch query dictionary.
+    """
+
+    query = {
+        "size": k,
+        "query": {
+            "script_score": {
+                "query": {"match_all": {}},
+                "script": {
+                    "source": "cosineSimilarity(params.query_vector, doc['{}']) + 1.0".format(field_name),
+                    "params": {"query_vector": query_vector.tolist()}
+                }
+            }
+        }
+    }
+
+    return query
