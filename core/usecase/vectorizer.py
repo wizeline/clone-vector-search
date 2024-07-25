@@ -50,7 +50,6 @@ class VectorizerUsecase(AbstractVectorizeUsecase):
         """
 
         json_content = self.s3_service.get_object(bucket_name, object_key)
-        self.logger.info(f"Received vectorization request for {object_key}")
         if json_content is None:
             error_message = "Not content to be indexing"
             self.logger.error(error_message)
@@ -75,13 +74,10 @@ class VectorizerUsecase(AbstractVectorizeUsecase):
         """
         try:
             # vectorize query
-            self.logger.info(f"Received search request for {query}")
             v_query = self.llama_index_service.vectorize_string(query)
-            self.logger.info(f"Vectorized query: {v_query}")
             vector = np.array(v_query)
             # build query
             query = build_opensearch_vector_query(vector, EMBED_FIELD)
-            self.logger.info(f"Built query: {query}")
             # search and return results
             results = self.opensearch_service.search(query)
             messages = [
