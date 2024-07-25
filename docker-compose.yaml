@@ -16,8 +16,6 @@ services:
       - OPENSEARCH_VERIFY_CERTS=${OPENSEARCH_VERIFY_CERTS}
       - S3_URL=${S3_URL}
       - HF_HOME=/tmp/
-      - AWS_ACCESS_KEY_ID=AKIA2VXXEGVMEPEGJOTY
-      - AWS_SECRET_ACCESS_KEY=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
     # networks:
     #   - internal-net
     # env_file: .env
