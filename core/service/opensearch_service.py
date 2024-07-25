@@ -1,9 +1,8 @@
-import json
 from logging import Logger
 
-from core.abstracts.services import AbstractOpensearchService
-
 from opensearchpy import OpenSearch
+
+from core.abstracts.services import AbstractOpensearchService
 
 
 class OpensearchService(AbstractOpensearchService):
@@ -36,7 +35,7 @@ class OpensearchService(AbstractOpensearchService):
         """
         try:
             response = self.client.search(index=self.index, body=query)
-            return response['hits']['hits']
+            return response["hits"]["hits"]
         except Exception as e:
             error_message = f"Error while searching in OpenSearch: {str(e)}"
             raise Exception(error_message)

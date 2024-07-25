@@ -2,7 +2,7 @@ from http import HTTPStatus
 from logging import Logger
 from typing import Any, Dict, Tuple
 
-from flask import jsonify, Response
+from flask import Response, jsonify
 
 from core.abstracts.controller import AbstractVectorController
 from core.abstracts.usescases import AbstractVectorizeUsecase
@@ -42,7 +42,10 @@ class VectorController(AbstractVectorController):
 
         try:
             self.usecase.vectorize_and_index(s3_bucket, s3_object_key)
-            return jsonify({"message": "Object vectorization succeeded!"}), HTTPStatus.OK
+            return (
+                jsonify({"message": "Object vectorization succeeded!"}),
+                HTTPStatus.OK,
+            )
         except Exception as e:
             self.logger.error(f"Failed to vectorize object {s3_object_key}")
             return jsonify({"error": str(e)}), HTTPStatus.INTERNAL_SERVER_ERROR
@@ -50,10 +53,13 @@ class VectorController(AbstractVectorController):
     def search(self, request: Dict[str, Any]) -> Tuple[Response, int]:
         query = request["q"]
         if query is None or query.strip() == "":
-            return jsonify({'error': 'query param "q" is required'}), HTTPStatus.BAD_REQUEST
+            return (
+                jsonify({"error": 'query param "q" is required'}),
+                HTTPStatus.BAD_REQUEST,
+            )
 
         try:
             result = self.usecase.search(query)
-            return jsonify({'results': result}), HTTPStatus.OK
+            return jsonify({"results": result}), HTTPStatus.OK
         except Exception as e:
-            return jsonify({'error': str(e)}), HTTPStatus.INTERNAL_SERVER_ERROR
+            return jsonify({"error": str(e)}), HTTPStatus.INTERNAL_SERVER_ERROR

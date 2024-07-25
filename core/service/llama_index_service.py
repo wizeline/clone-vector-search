@@ -19,9 +19,9 @@ class LlamaIndexService(AbstractLlamaIndexService):
     """
 
     def __init__(
-            self,
-            vector_store: OpensearchVectorStore,
-            logger: Logger,
+        self,
+        vector_store: OpensearchVectorStore,
+        logger: Logger,
     ):
         """
         Initialize the LlamaIndexService.
@@ -37,7 +37,12 @@ class LlamaIndexService(AbstractLlamaIndexService):
         self.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
 
     def vector_store_index(
-            self, twin_id: str, source_name: str, file_uuid: str, documents: list
+        self,
+        twin_id: str,
+        source_name: str,
+        channelId: str,
+        file_uuid: str,
+        documents: list,
     ) -> str:
         """
         Index documents and store vectors in OpenSearch.
@@ -45,12 +50,16 @@ class LlamaIndexService(AbstractLlamaIndexService):
         Args:
             twin_id (str): Identifier for the twin.
             source_name (str): Name of the data source.
+            channelId (str): Identifier for the channel.
             file_uuid (str): UUID of the file containing the documents.
             documents (list): list of dictionary representing documents.
 
         Returns:
             str: Index summary
         """
+        self.logger.info(
+            f"vector_store_index: {twin_id}, {source_name}, {channelId}, {file_uuid}"
+        )
         docs = []
         for message in documents:
             # tokenization, lower-casing, and removal of stopwords and punctuation before generating embeddings
@@ -64,16 +73,17 @@ class LlamaIndexService(AbstractLlamaIndexService):
                     metadata={
                         "raw_text": message["text"],
                         "user_name": message["user_name"],
+                        "user_id": message["user_id"],
                         "processed_user": processed_user,
                         "twin_id": twin_id,
                         "source_name": source_name,
                         "file_uuid": file_uuid,
+                        "channelId": channelId,
                     },
                     metadata_seperator=":",
                     embedding=embed_value,
                 )
             )
-        self.logger.info(docs)
         try:
             index = VectorStoreIndex.from_documents(
                 documents=docs,
@@ -81,11 +91,11 @@ class LlamaIndexService(AbstractLlamaIndexService):
                 embed_model=self.embed_model,
             )
             self.logger.info(
-                f"Indexing documents for {twin_id}/{source_name}/{file_uuid}: {index.summary}"
+                f"Indexing documents for {twin_id}/{source_name}/{channelId}/{file_uuid}"
             )
             return index.summary
         except Exception as e:
-            message_error = f"Error while indexing documents for {twin_id}/{source_name}/{file_uuid}"
+            message_error = f"Error while indexing documents for {twin_id}/{source_name}/{channelId}/{file_uuid}"
             self.logger.error(e)
             raise ValueError(message_error)
 

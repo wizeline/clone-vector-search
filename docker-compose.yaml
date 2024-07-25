@@ -1,0 +1,64 @@
+services:
+  server:
+    build:
+      context: .
+    ports:
+      - 8000:8000
+    environment:
+      - IS_LOCAL=${IS_LOCAL}
+      - LOG_LEVEL=${LOG_LEVEL}
+      - OPENSEARCH_INDEX=${OPENSEARCH_INDEX}
+      - OPENSEARCH_HOST=${OPENSEARCH_HOST}
+      - OPENSEARCH_PORT=${OPENSEARCH_PORT}
+      - OPENSEARCH_USER=${OPENSEARCH_USER}
+      - OPENSEARCH_PASS=${OPENSEARCH_PASS}
+      - OPENSEARCH_USE_SSL=${OPENSEARCH_USE_SSL}
+      - OPENSEARCH_VERIFY_CERTS=${OPENSEARCH_VERIFY_CERTS}
+      - S3_URL=${S3_URL}
+      - HF_HOME=/tmp/
+      - AWS_ACCESS_KEY_ID=AKIA2VXXEGVMEPEGJOTY
+      - AWS_SECRET_ACCESS_KEY=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
+    # networks:
+    #   - internal-net
+    # env_file: .env
+    # depends_on:
+    #   localstack:
+    #     condition: service_started
+    #   opensearch:
+    #     condition: service_started
+    #     restart: true
+
+#   localstack:
+#     image: localstack/localstack:latest
+#     environment:
+#       - SERVICES=s3
+#       - DEBUG=1
+#       - AWS_ACCESS_KEY_ID=test
+#       - AWS_SECRET_ACCESS_KEY=test
+#       - AWS_DEFAULT_REGION=us-east-1
+#     ports:
+#       - "4566:4566"
+#     volumes:
+#       - "${TMPDIR:-/tmp}/localstack:/var/lib/localstack"
+#       - ./localstack:/etc/localstack/init/ready.d
+#     networks:
+#       - internal-net
+
+#   opensearch:
+#     image: opensearchproject/opensearch:2
+#     container_name: opensearch
+#     ports:
+#       - "9200:9200"
+#       - "9600:9600"
+#     networks:
+#       - internal-net
+#     restart: always
+#     environment:
+#       - discovery.type=single-node
+#       - plugins.security.disabled=true
+#       - plugins.security.restapi.password_score_based_validation_strength=fair
+#       - OPENSEARCH_INITIAL_ADMIN_PASSWORD="oJjHYJinNQ2k4!iQWTxrPdsmbtWA*4"
+
+# networks:
+#   internal-net:
+#     name: internal-vector-search

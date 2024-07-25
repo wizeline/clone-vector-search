@@ -1,8 +1,8 @@
-import numpy
-import numpy as np
-
 from logging import Logger
 from typing import Any
+
+import numpy
+import numpy as np
 
 from core.abstracts.services import AbstractOpensearchService
 from core.abstracts.usescases import AbstractVectorizeUsecase
@@ -18,11 +18,11 @@ class VectorizerUsecase(AbstractVectorizeUsecase):
     """
 
     def __init__(
-            self,
-            s3_service: AbstractS3Service,
-            llama_index_service: AbstractLlamaIndexService,
-            opensearch_service: AbstractOpensearchService,
-            logger: Logger,
+        self,
+        s3_service: AbstractS3Service,
+        llama_index_service: AbstractLlamaIndexService,
+        opensearch_service: AbstractOpensearchService,
+        logger: Logger,
     ):
         """
         Initialize the Usecase.
@@ -56,9 +56,9 @@ class VectorizerUsecase(AbstractVectorizeUsecase):
             self.logger.error(error_message)
             raise ValueError(error_message)
         try:
-            twin_id, source_name, file_uuid = object_key.split("/")
+            twin_id, source_name, channel, file_uuid = object_key.split("/")
             return self.llama_index_service.vector_store_index(
-                twin_id, source_name, file_uuid, json_content
+                twin_id, source_name, channel, file_uuid, json_content
             )
         except ValueError as e:
             self.logger.error(e)
@@ -85,11 +85,15 @@ class VectorizerUsecase(AbstractVectorizeUsecase):
                 "raw_text": result["_source"]["metadata"]["raw_text"],
                 "source_name": result["_source"]["metadata"]["source_name"],
                 "file_uuid": result["_source"]["metadata"]["file_uuid"],
-            } for result in results]
+            }
+            for result in results
+        ]
         return messages
 
 
-def build_opensearch_vector_query(query_vector: numpy.ndarray, field_name: str, k: int = 10) -> dict:
+def build_opensearch_vector_query(
+    query_vector: numpy.ndarray, field_name: str, k: int = 10
+) -> dict:
     """
     Builds an OpenSearch query for searching in vector fields sorted by cosine similarity.
     Args:
@@ -106,11 +110,13 @@ def build_opensearch_vector_query(query_vector: numpy.ndarray, field_name: str, 
             "script_score": {
                 "query": {"match_all": {}},
                 "script": {
-                    "source": "cosineSimilarity(params.query_vector, doc['{}']) + 1.0".format(field_name),
-                    "params": {"query_vector": query_vector.tolist()}
-                }
+                    "source": "cosineSimilarity(params.query_vector, doc['{}']) + 1.0".format(
+                        field_name
+                    ),
+                    "params": {"query_vector": query_vector.tolist()},
+                },
             }
-        }
+        },
     }
 
     return query
