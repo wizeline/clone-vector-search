@@ -73,22 +73,29 @@ class VectorizerUsecase(AbstractVectorizeUsecase):
         Returns:
             list[dict[str, Any]]: A list of matching documents.
         """
-        # vectorize query
-        v_query = self.llama_index_service.vectorize_string(query)
-        vector = np.array(v_query)
-        # build query
-        query = build_opensearch_vector_query(vector, EMBED_FIELD)
-        # search and return results
-        results = self.opensearch_service.search(query)
-        messages = [
-            {
-                "raw_text": result["_source"]["metadata"]["raw_text"],
-                "source_name": result["_source"]["metadata"]["source_name"],
-                "file_uuid": result["_source"]["metadata"]["file_uuid"],
-            }
-            for result in results
-        ]
-        return messages
+        try:
+            # vectorize query
+            self.logger.info(f"Received search request for {query}")
+            v_query = self.llama_index_service.vectorize_string(query)
+            self.logger.info(f"Vectorized query: {v_query}")
+            vector = np.array(v_query)
+            # build query
+            query = build_opensearch_vector_query(vector, EMBED_FIELD)
+            self.logger.info(f"Built query: {query}")
+            # search and return results
+            results = self.opensearch_service.search(query)
+            messages = [
+                {
+                    "raw_text": result["_source"]["metadata"]["raw_text"],
+                    "source_name": result["_source"]["metadata"]["source_name"],
+                    "file_uuid": result["_source"]["metadata"]["file_uuid"],
+                }
+                for result in results
+            ]
+            return messages
+        except ValueError as e:
+            self.logger.error(f"ERROR: {e}")
+            raise ValueError(e)
 
 
 def build_opensearch_vector_query(

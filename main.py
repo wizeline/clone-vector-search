@@ -13,6 +13,7 @@ from core.service.llama_index_service import LlamaIndexService
 from core.service.opensearch_service import OpensearchService
 from core.service.s3_service import S3Service
 from core.usecase.vectorizer import VectorizerUsecase
+from core.utils.definitions import MAPPINGS
 from core.utils.logger import logger
 
 load_dotenv()
@@ -34,6 +35,8 @@ try:
         verify_certs=True,
         connection_class=RequestsHttpConnection,
     )
+    if not opensearch_client.indices.exists(index=cfg.OPENSEARCH_INDEX):
+        opensearch_client.indices.create(index=cfg.OPENSEARCH_INDEX, body=MAPPINGS)
 except Exception as e:
     logger.error(f"Failed to connect to OpenSearch: {e}")
     raise

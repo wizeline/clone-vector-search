@@ -57,9 +57,6 @@ class LlamaIndexService(AbstractLlamaIndexService):
         Returns:
             str: Index summary
         """
-        self.logger.info(
-            f"vector_store_index: {twin_id}, {source_name}, {channelId}, {file_uuid}"
-        )
         docs = []
         for message in documents:
             # tokenization, lower-casing, and removal of stopwords and punctuation before generating embeddings

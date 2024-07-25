@@ -76,7 +76,7 @@ class AbstractOpensearchService(ABC):
         Abstract method to query an opensearch index
 
         Args:
-            query (dict): Opensearch DSL query string
+            query (dict): Opensearch query string
 
         Returns:
             list: a list of results
