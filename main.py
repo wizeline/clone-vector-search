@@ -55,7 +55,7 @@ def initialize_app():
         os_vector_client = OpensearchVectorClient(
             cfg.OPENSEARCH_HOST,
             cfg.OPENSEARCH_INDEX,
-            1536,
+            384,
             embedding_field=embedding_field,
             text_field=text_field,
             http_auth=(cfg.OPENSEARCH_USER, cfg.OPENSEARCH_PASS),
