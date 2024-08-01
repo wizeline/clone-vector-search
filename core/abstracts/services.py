@@ -29,7 +29,12 @@ class AbstractLlamaIndexService(ABC):
 
     @abstractmethod
     def vector_store_index(
-        self, twin_id: str, source_name: str, file_uuid: str, documents: list
+        self,
+        twin_id: str,
+        source_name: str,
+        channelId: str,
+        file_uuid: str,
+        documents: list,
     ) -> str:
         """
         Abstract method to indexing documents and store vectors in OpenSearch.
@@ -37,6 +42,7 @@ class AbstractLlamaIndexService(ABC):
         Args:
             twin_id (str): Identifier for the twin.
             source_name (str): Name of the data source.
+            channelId (str): Channel identifier.
             file_uuid (str): UUID of the file containing the documents.
             documents (list): List of dictionaries representing documents.
 
@@ -48,28 +54,29 @@ class AbstractLlamaIndexService(ABC):
     @abstractmethod
     def vectorize_string(self, text_input: str) -> list:
         """
-            Abstract method to indexing documents and store vectors in OpenSearch.
+        Abstract method to indexing documents and store vectors in OpenSearch.
 
-            Args:
-                text_input (str): A string to vectorize
+        Args:
+            text_input (str): A string to vectorize
 
-            Returns:
-                list: a list of float values representing a vector
-            """
+        Returns:
+            list: a list of float values representing a vector
+        """
         pass
 
 
 class AbstractOpensearchService(ABC):
     """
-       Abstract class for Opensearch services
-   """
+    Abstract class for Opensearch services
+    """
+
     @abstractmethod
     def search(self, query: dict) -> list:
         """
         Abstract method to query an opensearch index
 
         Args:
-            query (dict): Opensearch DSL query string
+            query (dict): Opensearch query string
 
         Returns:
             list: a list of results
